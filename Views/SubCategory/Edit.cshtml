@@ -73,39 +73,33 @@
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-
         //Script to pupulate the subCategory list
         let categoryList = document.getElementById("ddlCategorylist");
         //Event: First event
         document.addEventListener("DOMContentLoaded", updateSubCategoryList);
 
+        //function updateSubCategoryList() {
+        //    let categorySelected = document.getElementById("ddlCategorylist").value;
 
-        function updateSubCategoryList() {
-            let categorySelected = document.getElementById("ddlCategorylist").value;
+        //   //console.log(categorySelected);
+        //    let list = document.getElementById("SubcategoryList");
 
-           //console.log(categorySelected);
-            let list = document.getElementById("SubcategoryList");
+        //    // changed the path to fix, not sure why, but SUbCategory Was duplicated
+        //    fetch("../SubCategory/getSubCategory/" + categorySelected )
+        //        .then(response => {
+        //            console.log(response);
+        //            return response.text();
+        //        })
+        //        .then(data => {
+        //            let results = JSON.parse(data);
+        //            list.innerHTML = " "
 
-            // changed the path to fix, not sure why, but SUbCategory Was duplicated
-            fetch("../getSubCategory/" + categorySelected )
-                .then(response => {
-                    console.log(response);
-                    return response.text();
-                })
-                .then(data => {
-                    let results = JSON.parse(data);
-                    list.innerHTML = " "
+        //            for (i in results) {
 
-                    for (i in results) {
-
-                        list.innerHTML += `<p class="text-muted">  ${results[i].text} </p>`
-                    }
-
-
-                });
-
-        };
-
+        //                list.innerHTML += `<p class="text-muted">  ${results[i].text} </p>`
+        //            }
+        //        });
+        //};
 
     </script>
 
