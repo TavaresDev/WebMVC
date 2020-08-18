@@ -1,0 +1,111 @@
+﻿@model WebMVC.Models.SubCategory
+
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2> Details Sub Category</h2>
+<br />
+
+
+<div class="row">
+    <div class="col-md-8 border-right">
+
+
+            @*<input type="hidden" asp-for="SubCategory.CategoryId" />
+            <input type="hidden" asp-for="SubCategory.Id" />*@
+
+        <div>
+            @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>*@
+
+
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <label asp-for="Category.Name" class="control-label"></label>
+                </div>
+                <div class="col-md-5">
+                    <input asp-for="Category.Name" disabled class="form-control" />
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <label asp-for="Name" class="control-label"></label>
+                </div>
+                <div class="col-md-5">
+                    <input id="ddlCategorylist" asp-for="Name" disabled class="form-control" />
+                </div>
+            </div>
+
+
+
+            <div class="form-group row">
+                <div class="col-md-5 offset-md-3">
+                    <partial name="_DetailsAndBackToListButton" model="Model.Id" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-3 offset-1">
+
+        @*@if (Model.SubCategoryList.Count() > 0)
+        {
+            <p> Existing Subcategories:</p>
+
+            <div id="SubcategoryList">
+                <ul class="list-group"> </ul>
+            </div>
+        }*@
+
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        //Script to pupulate the subCategory list
+        let categoryList = document.getElementById("ddlCategorylist");
+        //Event: First event
+        document.addEventListener("DOMContentLoaded", updateSubCategoryList);
+
+
+        function updateSubCategoryList() {
+            let categorySelected = document.getElementById("ddlCategorylist").value;
+
+            //console.log(categorySelected);
+            let list = document.getElementById("SubcategoryList");
+
+            // changed the path to fix, not sure why, but SUbCategory Was duplicated
+            fetch("../getSubCategory/" + categorySelected)
+                .then(response => {
+                    console.log(response);
+                    return response.text();
+                })
+                .then(data => {
+                    let results = JSON.parse(data);
+                    list.innerHTML = " "
+
+                    for (i in results) {
+
+                        list.innerHTML += `<p class="text-muted">  ${results[i].text} </p>`
+                    }
+
+
+                });
+
+        };
+
+
+    </script>
+
+}
