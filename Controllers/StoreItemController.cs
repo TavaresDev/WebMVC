@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebMVC.Data;
+using WebMVC.Models;
 using WebMVC.Models.ViewModels;
 using WebMVC.Utility;
 
@@ -61,8 +62,8 @@ namespace WebMVC.Controllers
             _db.StoreItem.Add(StoreItemVM.StoreItem);
             await _db.SaveChangesAsync();
 
-            //Work on the image save section
-            //the image name need to be unique
+            //Work on the image save section - the image name need to be unique
+
             string webRootPath = _hostingEnviroment.WebRootPath;
             var files = HttpContext.Request.Form.Files;
 
@@ -77,7 +78,6 @@ namespace WebMVC.Controllers
                 using (var filesStream = new FileStream(Path.Combine(uploads,StoreItemVM.StoreItem.Id + extension), FileMode.Create))
                 {
                     files[0].CopyTo(filesStream);
-
                 }
                 StoreItemFromDb.Image = @"\images\StoreImages\" + StoreItemVM.StoreItem.Id + extension;
 
@@ -87,7 +87,7 @@ namespace WebMVC.Controllers
                 //nofiles was upload
                 var uploads = Path.Combine(webRootPath, @"images\StoreImages\" + SD.DefaultItemImage);
                 System.IO.File.Copy(uploads, webRootPath + @"\images\StoreImages\" + StoreItemVM.StoreItem.Id + ".jpg");
-                StoreItemFromDb.Image = @"\images\StoreImages" + StoreItemVM.StoreItem.Id + ".jpg";
+                StoreItemFromDb.Image = @"\images\StoreImages\" + StoreItemVM.StoreItem.Id + ".jpg";
 
             }
             await _db.SaveChangesAsync();
@@ -187,8 +187,7 @@ namespace WebMVC.Controllers
                 return NotFound();
             }
             StoreItemVM.StoreItem = await _db.StoreItem.Include(m => m.Category).Include(m => m.SubCategory).SingleOrDefaultAsync(m => m.Id == id);
-            StoreItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == StoreItemVM.StoreItem.CategoryId).ToListAsync();
-
+           
             if (StoreItemVM.StoreItem == null)
             {
                 return NotFound();
@@ -204,8 +203,7 @@ namespace WebMVC.Controllers
                 return NotFound();
             }
             StoreItemVM.StoreItem = await _db.StoreItem.Include(m => m.Category).Include(m => m.SubCategory).SingleOrDefaultAsync(m => m.Id == id);
-            StoreItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == StoreItemVM.StoreItem.CategoryId).ToListAsync();
-
+            
             if (StoreItemVM.StoreItem == null)
             {
                 return NotFound();
@@ -216,28 +214,24 @@ namespace WebMVC.Controllers
         //POST - DELETE
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeletePost(int? id)
+        public async Task<IActionResult> DeletePost(int id)
         {
 
-                 
-            var storeItemFromDb = await _db.StoreItem.FindAsync(StoreItemVM.StoreItem.Id);
-
-            _db.StoreItem.Remove(storeItemFromDb);
-
-            //Work on the image Delete section 
             string webRootPath = _hostingEnviroment.WebRootPath;
-            var files = HttpContext.Request.Form.Files;
+            StoreItem storeItem = await _db.StoreItem.FindAsync(id);
 
-
-            var imagePath = Path.Combine(webRootPath, storeItemFromDb.Image.TrimStart('\\'));
-            //Delete the file
-            if (System.IO.File.Exists(imagePath))
+            if(storeItem != null)
             {
-                System.IO.File.Delete(imagePath);
-            }
+                var imagePath = Path.Combine(webRootPath, storeItem.Image.TrimStart('\\'));
+                //Delete the file
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
 
-
-            await _db.SaveChangesAsync();
+                _db.StoreItem.Remove(storeItem);
+                await _db.SaveChangesAsync();
+            }        
 
             return RedirectToAction(nameof(Index));
         }
