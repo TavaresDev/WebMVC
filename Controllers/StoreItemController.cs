@@ -100,12 +100,10 @@ namespace WebMVC.Controllers
         //GET - EDIT
         public async Task<IActionResult> Edit(int? id)
         {
-
             if(id == null)
             {
                 return NotFound();
             }
-
             StoreItemVM.StoreItem = await _db.StoreItem.Include(m => m.Category).Include(m => m.SubCategory).SingleOrDefaultAsync(m => m.Id == id);
             StoreItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == StoreItemVM.StoreItem.CategoryId).ToListAsync();
 
@@ -135,9 +133,6 @@ namespace WebMVC.Controllers
                 return View(StoreItemVM);
             }
 
-            //_db.StoreItem.Add(StoreItemVM.StoreItem);
-            //await _db.SaveChangesAsync();
-
             //Work on the image save section -   //the image name need to be unique
 
             string webRootPath = _hostingEnviroment.WebRootPath;
@@ -153,13 +148,14 @@ namespace WebMVC.Controllers
 
 
                 //Delete the OG file
-                var imagePath = Path.Combine(webRootPath, storeItemFromDb.Image.TrimStart('\\'));
-
-                if (System.IO.File.Exists(imagePath))
+                if(storeItemFromDb.Image != null)
                 {
-                    System.IO.File.Delete(imagePath);
+                    var imagePath = Path.Combine(webRootPath, storeItemFromDb.Image.TrimStart('\\'));
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
                 }
-
                 //we will Upload the new file
                 using (var filesStream = new FileStream(Path.Combine(uploads, StoreItemVM.StoreItem.Id + extension_new), FileMode.Create))
                 {
@@ -169,12 +165,6 @@ namespace WebMVC.Controllers
                 storeItemFromDb.Image = @"\images\StoreImages\" + StoreItemVM.StoreItem.Id + extension_new;
 
             }
-            else
-            {
-                //No new image has been uploaded
-                //do nothing
-                
-            }
 
             storeItemFromDb.Name = StoreItemVM.StoreItem.Name;
             storeItemFromDb.Description = StoreItemVM.StoreItem.Description;
@@ -183,14 +173,74 @@ namespace WebMVC.Controllers
             storeItemFromDb.CategoryId = StoreItemVM.StoreItem.CategoryId;
             storeItemFromDb.SubCategoryId = StoreItemVM.StoreItem.SubCategoryId;
 
-
-
             await _db.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
 
 
+        //GET - Details
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            StoreItemVM.StoreItem = await _db.StoreItem.Include(m => m.Category).Include(m => m.SubCategory).SingleOrDefaultAsync(m => m.Id == id);
+            StoreItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == StoreItemVM.StoreItem.CategoryId).ToListAsync();
+
+            if (StoreItemVM.StoreItem == null)
+            {
+                return NotFound();
+            }
+            return View(StoreItemVM);
+        }
+
+        //GET - DELETE
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            StoreItemVM.StoreItem = await _db.StoreItem.Include(m => m.Category).Include(m => m.SubCategory).SingleOrDefaultAsync(m => m.Id == id);
+            StoreItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == StoreItemVM.StoreItem.CategoryId).ToListAsync();
+
+            if (StoreItemVM.StoreItem == null)
+            {
+                return NotFound();
+            }
+            return View(StoreItemVM);
+        }
+
+        //POST - DELETE
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePost(int? id)
+        {
+
+                 
+            var storeItemFromDb = await _db.StoreItem.FindAsync(StoreItemVM.StoreItem.Id);
+
+            _db.StoreItem.Remove(storeItemFromDb);
+
+            //Work on the image Delete section 
+            string webRootPath = _hostingEnviroment.WebRootPath;
+            var files = HttpContext.Request.Form.Files;
+
+
+            var imagePath = Path.Combine(webRootPath, storeItemFromDb.Image.TrimStart('\\'));
+            //Delete the file
+            if (System.IO.File.Exists(imagePath))
+            {
+                System.IO.File.Delete(imagePath);
+            }
+
+
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
 
     }
 

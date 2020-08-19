@@ -13,38 +13,38 @@
 
 
 
-            <form method="post" asp-action="Delete">
+<form method="post" asp-action="Delete">
 
 
-            <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Id" />
 
-            <div>
+    <div>
 
-                <div class="form-group row">
-                    <div class="col-md-2">
-                        <label asp-for="Category.Name" class="custom-label"></label>
-                    </div>
-                    <div class="col-md-5">
-                        <input asp-for="Category.Name" readonly class="form-control" />
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-md-2">
-                        <label asp-for="Name" class="control-label"></label>
-                    </div>
-                    <div class="col-md-5">
-                        <input asp-for="Name" readonly class="form-control" />
-                    </div>
-
-                </div>
-
-
-                <div class="form-group row">
-                    <div class="col-md-5 offset-md-2">
-                        <partial name="_DeleteAndBackToListButton" model="Model.Id" />
-                    </div>
-                </div>
+        <div class="form-group row">
+            <div class="col-md-2">
+                <label asp-for="Category.Name" class="custom-label"></label>
             </div>
-            </form>
+            <div class="col-md-5">
+                <input asp-for="Category.Name" readonly class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-2">
+                <label asp-for="Name" class="control-label"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Name" readonly class="form-control" />
+            </div>
+
+        </div>
+
+
+        <div class="form-group row">
+            <div class="col-md-5 offset-md-2">
+                <partial name="_DeleteAndBackToListButton" model="Model.Id" />
+            </div>
+        </div>
+    </div>
+</form>
 
