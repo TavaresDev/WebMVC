@@ -1,9 +1,75 @@
-﻿@{
+﻿@model WebMVC.Models.ViewModels.IndexViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Web MVC</h1>
-    <h2>soemthing</h2>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+@*// Coupons changing*@
+
+@if(Model.Coupon.ToList().Count > 0){
+    
+    <div class="row">
+        <div class="carousel" data-ride="carousel" data-interval="2500">
+            @for(int i = 0; i < Model.Coupon.Count(); i++)
+            {
+                //if its 0 marck as active
+                if (i == 0)
+                {
+                    <div class="carousel-item active" >
+                    @{ 
+                        var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
+                        var imgsrc = string.Format("data:image/png;base64,{0}", base64);
+                    }
+                        <img src="@imgsrc" class="img-fluid" alt="soemthing wrong" />
+                    </div>
+                }
+                //if its not
+                else
+                {
+                    <div class="carousel-item" >
+                    @{ 
+                        var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
+                        var imgsrc = string.Format("data:image/png;base64,{0}", base64);
+                    }
+                        <img src="@imgsrc" class="img-fluid" alt="soemthing wrong2" />
+                    </div>
+                }
+
+            }
+
+        </div>
+    </div>
+
+}
+
+<br />
+
+@* Store Shop Items container *@
+<div class="container">
+
+    @* Menu navbar *@
+    <ul id="store-filters" class="store-filter-list list-inline text-center" >
+
+        <li class=" filter btn btn-secondary px-2 mx-1" data-filter="" > Show All</li>
+
+        @foreach(var category in Model.Category)
+        {
+            <li class="filter btn btn-secondary px-2 mx-1"> @category.Name </li>
+        }
+    </ul>
+
+
+    @* Display items from category *@
+    @foreach(var category in Model.Category)
+    {
+        <div class="row" id="store-wrapper">
+            <partial name="_ThumbnailAreaPartial" model="@Model.StoreItem.Where(u => u.Category.Name.Equals(category.Name))" />
+
+        </div>
+    }
+
 </div>
+
+
+

@@ -4,23 +4,43 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using WebMVC.Data;
 using WebMVC.Models;
+using WebMVC.Models.ViewModels;
 
 namespace WebMVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        //Dependency Injection
+        private readonly ApplicationDbContext _db;
+        public HomeController(ApplicationDbContext db)
         {
-            _logger = logger;
+            _db = db;
         }
 
-        public IActionResult Index()
+
+        //private readonly ILogger<HomeController> _logger;
+
+        //public HomeController(ILogger<HomeController> logger)
+        //{
+        //    _logger = logger;
+        //}
+
+        public async Task<IActionResult> Index()
         {
-            return View();
+            //query the data
+            IndexViewModel IndexVM = new IndexViewModel()
+            {
+                StoreItem = await _db.StoreItem.Include(m => m.Category).Include(m => m.SubCategory).ToListAsync(),
+                Category = await _db.Category.ToListAsync(),
+                Coupon = await _db.Coupon.Where(c => c.IsActive == true).ToListAsync()
+            };
+            //Pass data to view
+            return View(IndexVM);
         }
 
         public IActionResult Privacy()

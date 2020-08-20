@@ -69,3 +69,20 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+
+/* My styles CSS andre*/
+
+.store-filter-list li {
+    display:inline-block;
+    cursor:pointer;
+    background-color:#333;
+    font-size:1.2em;
+}
+
+.store.filter-list li:hover{
+
+    background-color:#545b62!important;
+    color:#fff;
+
+}

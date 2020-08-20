@@ -11,8 +11,10 @@ namespace WebMVC.Controllers
 {
     public class CategoryController : Controller
     {
+        //Dependency injection
         private readonly ApplicationDbContext _db;
 
+        //Contructor
         public CategoryController(ApplicationDbContext db)
         {
             _db = db;
@@ -107,7 +109,7 @@ namespace WebMVC.Controllers
 
         }
 
-        //GET - EDIT
+        //GET - DETAILS
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -122,13 +124,7 @@ namespace WebMVC.Controllers
             return View(category);
         }
 
-        //POST - EDIT
-        //public async Task<IActionResult> Details(Category category)
-        //{
-            
-        //    return View(category);
-        //}
-
+ 
 
     }
 }

@@ -1,0 +1,116 @@
+﻿@model WebMVC.Models.Coupon
+
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2>Edit Coupon</h2>
+<br />
+
+
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="row">
+
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="col-md-8">
+
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label asp-for="Name" class="control-label"></label>
+                </div>
+                <div class="col-md-8">
+                    <input asp-for="Name" class="form-control" />
+                </div>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label asp-for="Picture" class="control-label"></label>
+                </div>
+                <div class="col-md-8">
+                    <input type="file" name="files" id="couponImage" multiple class="form-control" />
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label asp-for="CouponType" class="control-label"></label>
+                </div>
+                <div class="col-md-8">
+
+                    <select asp-for="CouponType" asp-items="Html.GetEnumSelectList<Coupon.ECouponType>()" class="form-control">
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label asp-for="Discount" class="control-label"></label>
+                </div>
+                <div class="col-md-8">
+                    <input asp-for="Discount" class="form-control" />
+                </div>
+                <span asp-validation-for="Discount" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group row">
+                <div class="col-md-4">
+                    <label asp-for="MinimumAmount" class="control-label"></label>
+                </div>
+                <div class="col-md-8">
+                    <input asp-for="MinimumAmount" class="form-control" />
+                </div>
+                <span asp-validation-for="MinimumAmount" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group row">
+                <div class="col-md-2">
+                    <label asp-for="IsActive" class="control-label"></label>
+                </div>
+                <div class="col-md-5">
+                    <input type="checkbox" asp-for="IsActive" class="form-control" />
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="col-md-3 offset-1">
+            @{
+                //condicional created to avoid breaking when there is no cupon image
+                if (Model.Picture != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.Picture);
+                    var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+
+                    <img src="@imgsrc" class="img-thumbnail" alt="Coupon Image" />
+                }
+            }
+
+
+        </div>
+
+        <div class="col-md-8 my-3">
+            <div class="col-md-8 offset-md-4">
+                <partial name="_EditAndBackToListButton" model="Model.Id" />
+            </div>
+
+        </div>
+
+
+    </div>
+</form>
+
