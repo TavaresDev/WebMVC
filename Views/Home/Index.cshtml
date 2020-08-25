@@ -7,31 +7,32 @@
 
 @*// Coupons changing*@
 
-@if(Model.Coupon.ToList().Count > 0){
-    
+@if (Model.Coupon.ToList().Count > 0)
+{
+
     <div class="row">
         <div class="carousel" data-ride="carousel" data-interval="2500">
-            @for(int i = 0; i < Model.Coupon.Count(); i++)
+            @for (int i = 0; i < Model.Coupon.Count(); i++)
             {
                 //if its 0 marck as active
                 if (i == 0)
                 {
-                    <div class="carousel-item active" >
-                    @{ 
-                        var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
-                        var imgsrc = string.Format("data:image/png;base64,{0}", base64);
-                    }
+                    <div class="carousel-item active">
+                        @{
+                            var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
+                            var imgsrc = string.Format("data:image/png;base64,{0}", base64);
+                        }
                         <img src="@imgsrc" class="img-fluid" alt="soemthing wrong" />
                     </div>
                 }
                 //if its not
                 else
                 {
-                    <div class="carousel-item" >
-                    @{ 
-                        var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
-                        var imgsrc = string.Format("data:image/png;base64,{0}", base64);
-                    }
+                    <div class="carousel-item">
+                        @{
+                            var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
+                            var imgsrc = string.Format("data:image/png;base64,{0}", base64);
+                        }
                         <img src="@imgsrc" class="img-fluid" alt="soemthing wrong2" />
                     </div>
                 }
@@ -45,31 +46,219 @@
 
 <br />
 
+
+
+@* store part *@
+
+
+@* Menu new  navbar *@
+<nav class="navbar sticky-top navbar-expand-sm bg-light nav-fill w-100 ">
+
+
+    <div class="navbar-nav mx-auto">
+
+
+        <p class="btn btn-secondary px-2 mx-1" id="btnAll" > Show All2</p>
+
+
+        @*navbar item*@
+        @foreach (var category in Model.Category)
+        {
+            <p class=" btn btn-secondary px-2 mx-1 nav-link" onclick="getCategoryProducts('@category.Id');"> @category.Name</p>
+
+        }
+    </div>
+
+    @* form *@
+    @*<form class="form-inline">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>*@
+
+</nav>
+
+@* new version  *@
+<div class="container">
+
+
+    <div id="categoryName" class="row m-4">
+
+        
+    </div>
+
+    <div class="row">
+
+        <div id="catProducts">
+
+            @* Display items from category *@
+            @foreach (var category in Model.Category)
+            {
+                <div class="row" id="store-wrapper">
+                    @*<partial name="_ThumbnailAreaPartial" model="@Model.StoreItem.Where(u => u.Category.Name.Equals(category.Name))" />*@
+                    <partial name="_CategoryThumbnailAreaPartial" model="@Model.StoreItem.Where(u => u.Category.Name.Equals(category.Name))" />
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@* old *@
+
 @* Store Shop Items container *@
 <div class="container">
 
+
     @* Menu navbar *@
-    <ul id="store-filters" class="store-filter-list list-inline text-center" >
+    @*<ul id="store-filters" class="store-filter-list list-inline text-center ">
 
-        <li class=" filter btn btn-secondary px-2 mx-1" data-filter="" > Show All</li>
+            <li class=" filter btn btn-secondary px-2 mx-1" data-filter=".store-shop"> Show All</li>
 
-        @foreach(var category in Model.Category)
-        {
-            <li class="filter btn btn-secondary px-2 mx-1"> @category.Name </li>
-        }
-    </ul>
+            @foreach (var category in Model.Category)
+            {
+                <li class="filter btn btn-secondary px-2 mx-1" onclick="getCategoryProducts(@category.Id);" data-filter=".@category.Name.Replace("  ", string.Empty)"> @category.Name </li>
 
+            }
+        </ul>*@
 
     @* Display items from category *@
-    @foreach(var category in Model.Category)
-    {
-        <div class="row" id="store-wrapper">
-            <partial name="_ThumbnailAreaPartial" model="@Model.StoreItem.Where(u => u.Category.Name.Equals(category.Name))" />
+    @*@foreach (var category in Model.Category)
+        {
+            <div class="row" id="store-wrapper">
+                <partial name="_ThumbnailAreaPartial" model="@Model.StoreItem.Where(u => u.Category.Name.Equals(category.Name))" />
+                <partial name="_CategoryThumbnailAreaPartial" model="@Model.StoreItem.Where(u => u.Category.Name.Equals(category.Name))" />
 
-        </div>
-    }
+            </div>
+        }*@
 
 </div>
+
+
+
+
+
+
+
+
+
+@section Scripts{
+
+    @* Script to make api calls mo make the view *@
+    <script>
+
+
+        const catProductsWrapper = document.getElementById("catProducts");
+        const categoryName = document.getElementById("categoryName");
+        const storeWrapper = document.getElementById("store-wrapper");
+
+        const btnAll = document.getElementById("btnAll").addEventListener('click', getProducstAll);
+
+        function getProducstAll() {
+            console.log("btn work")
+
+
+        }
+
+        function getCategoryProducts(catId) {
+            fetch('/api/Categories/' + catId)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    categoryName.innerHTML = ""
+                    catProductsWrapper.innerHTML = " "
+
+                    data.map(item => {
+                        console.log(item);
+                        
+                        let categoryNameComponent = `<h3 class="text-success"> ${item.category.name}   </h3>`
+                        categoryName.innerHTML = categoryNameComponent
+                        const productComponent = `
+                     <div class="col-md-12">
+
+                                                 <div class="border m-3">
+                <div class="row p-3 " >   @* Card *@
+
+                    <div class="col-md-3 col-sm-12">
+                        <img src="${item.image}" class="img-thumbnail" alt="${item.name}" />
+                    </div>
+
+                    <div class="col-md-9 col-sm-12">
+                        <div class="row">
+
+                            <div class="col-8">
+                                <label class="text-primary">${item.name}</label>
+
+                            </div>
+                            <div class="col-4 text-right">
+                                <h4 class="text-muted">$ ${item.price}.00</h4>
+
+                            </div>
+                        </div>
+
+                        <div class="row col-md-12 text-justify d-md-block">
+                            <p> ${item.description} </p>
+
+                        </div>
+                        <div class="col-md-3 col-sm-12 offset-md-9 text-center">
+                            <a asp-action="Detail" class="btn btn bg-success form-control" asp-route-id="${item.id}">Details</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+       </div>
+
+                            `
+
+                        catProductsWrapper.innerHTML += productComponent;
+                    });
+                });
+        }
+
+
+
+    </script>
+
+    @*//old*@
+    <script>
+                //let post = document.querySelector('.post');
+                //let li = document.querySelector('#store-filters li');
+
+                //li.addEventListener('click', (e) => {
+                //    li.classList.remove('active btn btn-secondary');
+                //    e.classList.add('active', 'btn', 'btn-secondary')
+
+                //    let selectedFilter = e.data('filter');
+
+                //    //let store = document.querySelector('.store-shop');
+
+                //    //fadeout vanila js
+                //    var s = document.querySelector('.store-shop').style;
+                //    s.opacity = 1;
+                //    (function fade() { (s.opacity -= .1) < 0 ? s.display = "none" : setTimeout(fade, 40) })();
+
+                //});
+
+
+
+
+
+
+                //post.addEventListener('click', (e) => {
+
+
+                //});
+
+
+    </script>
+
+
+
+
+}
 
 
 

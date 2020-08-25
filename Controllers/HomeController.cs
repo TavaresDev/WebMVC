@@ -43,6 +43,26 @@ namespace WebMVC.Controllers
             return View(IndexVM);
         }
 
+        // API call Get: /Shop
+        [Route("api/Categories")]
+        public IActionResult GetCategories()
+        {
+            var categories = _db.Category.OrderBy(c => c.Name).ToList();
+            return Json(new { categories });
+        }
+
+        //Api cal to change the products with js
+        [Route("api/Categories/{Id:int}")]
+        public IActionResult GetProductsByCategory(int Id)
+        {
+            //store the selctes category name in the viewbag so we can display in the view heading
+            //ViewBag.Category = catId;
+
+            // get the list of products for the slected category and pass the list to the view
+            var products = _db.StoreItem.Include(m => m.Category).Where(p => p.Category.Id == Id).OrderBy(p => p.Name).ToList();
+            return Json(products);
+        }
+
         public IActionResult Privacy()
         {
             return View();
