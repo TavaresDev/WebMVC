@@ -23,21 +23,18 @@ namespace WebMVC.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _roleManager = roleManager;
-    }
+        }
 
         [BindProperty]
         public InputModel Input { get; set; }
@@ -63,18 +60,6 @@ namespace WebMVC.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
-            //Start of my changes for registration 
-            public string Name { get; set; }
-            public string StreetAddress { get; set; }
-            public string PhoneNumber { get; set; }
-            public string City { get; set; }
-            public string State { get; set; }
-            public string PostalCode { get; set; }
-
-
-
-
         }
 
         public async Task OnGetAsync(string returnUrl = null)

@@ -19,6 +19,5 @@ namespace WebMVC.Data
         public DbSet<SubCategory> SubCategory { get; set; }
         public DbSet<StoreItem> StoreItem { get; set; }
         public DbSet<Coupon> Coupon { get; set; }
-        public DbSet<ApplicationUser> ApplicationUser { get; set; }
     }
 }
